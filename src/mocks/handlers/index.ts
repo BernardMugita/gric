@@ -2,6 +2,7 @@ import { authHandlers } from './auth'
 import { countryHandlers } from './countries'
 import { dataPointHandlers } from './datapoints'
 import { disaggregationHandlers } from './disaggregations'
+import { evidenceHandlers } from './evidence'
 import { importHandlers } from './imports'
 import { indicatorHandlers } from './indicators'
 import { programmeHandlers } from './programmes'
@@ -14,6 +15,7 @@ export const handlers = [
   ...programmeHandlers,
   ...indicatorHandlers,
   ...dataPointHandlers,
+  ...evidenceHandlers,
   ...importHandlers,
   ...reportHandlers,
   ...userHandlers,

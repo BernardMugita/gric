@@ -1,6 +1,8 @@
 import type { AuditLogEntry } from '@/types/auditLog'
+import type { Baseline } from '@/types/baseline'
 import type { DataPoint } from '@/types/datapoint'
 import type { Domain } from '@/types/domain'
+import type { EvidenceAttachment } from '@/types/evidence'
 import type { RoleId } from '@/types/enums'
 import type { ImportBatch, ImportRowError } from '@/types/importBatch'
 import type { Indicator } from '@/types/indicator'
@@ -56,6 +58,7 @@ interface DbState {
   users: User[]
   auditLog: AuditLogEntry[]
   sessions: Map<string, string>
+  evidence: EvidenceAttachment[]
 }
 
 let idCounter = 0
@@ -76,6 +79,7 @@ function createInitialState(): DbState {
     users: clone(seedUsers),
     auditLog: [],
     sessions: new Map(),
+    evidence: [],
   }
   state.dataPoints = seedDataPoints(state.indicators)
   return state
@@ -232,20 +236,42 @@ export function findDuplicateDataPoint(
 
 export function createDataPoint(input: Omit<DataPoint, 'id' | 'status' | 'evidenceIds'> & {
   evidenceIds?: string[]
+  status?: 'draft' | 'submitted'
 }): DataPoint {
+  const status = input.status ?? 'submitted'
   const dataPoint: DataPoint = {
     ...input,
     id: nextId('dp'),
-    status: 'submitted',
+    status,
     evidenceIds: input.evidenceIds ?? [],
-    submittedAt: new Date().toISOString(),
+    submittedAt: status === 'submitted' ? new Date().toISOString() : undefined,
   }
   state.dataPoints.push(dataPoint)
   addAuditLogEntry({
     entityType: 'DataPoint',
     entityId: dataPoint.id,
     actorId: dataPoint.submittedBy ?? 'unknown',
+    action: status === 'draft' ? 'save_draft' : 'submit',
+    after: dataPoint,
+  })
+  return dataPoint
+}
+
+/** FR-DC-3: promote a saved draft to submitted, ready for review. */
+export function submitDraft(id: string, actorId: string): DataPoint | undefined {
+  const dataPoint = state.dataPoints.find((dp) => dp.id === id)
+  if (!dataPoint || dataPoint.status !== 'draft') return undefined
+
+  const before = clone(dataPoint)
+  dataPoint.status = 'submitted'
+  dataPoint.submittedAt = new Date().toISOString()
+  dataPoint.submittedBy = dataPoint.submittedBy ?? actorId
+  addAuditLogEntry({
+    entityType: 'DataPoint',
+    entityId: dataPoint.id,
+    actorId,
     action: 'submit',
+    before,
     after: dataPoint,
   })
   return dataPoint
@@ -277,6 +303,51 @@ export function updateDataPointStatus(
     after: dataPoint,
   })
   return dataPoint
+}
+
+// --- Evidence (FR-DC-5) ---
+
+export function createEvidence(options: { file: File; uploadedBy: string }): EvidenceAttachment {
+  const evidence: EvidenceAttachment = {
+    id: nextId('ev'),
+    dataPointId: '', // linked when the DataPoint carrying it is created
+    fileUrl: URL.createObjectURL(options.file),
+    fileName: options.file.name,
+    uploadedBy: options.uploadedBy,
+    uploadedAt: new Date().toISOString(),
+  }
+  state.evidence.push(evidence)
+  return evidence
+}
+
+// --- Baseline revision (FR-DC-9, NFR-4) ---
+
+export function reviseBaseline(
+  indicatorId: string,
+  actorId: string,
+  input: Omit<Baseline, 'id' | 'indicatorId' | 'version' | 'previousVersionId'>,
+): Indicator | undefined {
+  const indicator = state.indicators.find((i) => i.id === indicatorId)
+  if (!indicator) return undefined
+
+  const previous = indicator.baseline
+  const revised: Baseline = {
+    ...input,
+    id: nextId('bl'),
+    indicatorId,
+    version: previous.version + 1,
+    previousVersionId: previous.id,
+  }
+  indicator.baseline = revised
+  addAuditLogEntry({
+    entityType: 'Baseline',
+    entityId: revised.id,
+    actorId,
+    action: 'revise',
+    before: previous,
+    after: revised,
+  })
+  return indicator
 }
 
 // --- Imports (async job simulation) ---

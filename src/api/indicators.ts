@@ -1,3 +1,4 @@
+import type { Baseline } from '@/types/baseline'
 import type { DataPoint } from '@/types/datapoint'
 import type { Indicator } from '@/types/indicator'
 import { apiRequest } from './client'
@@ -30,4 +31,11 @@ export function listIndicatorDataPoints(
   params: ListParams = {},
 ): Promise<Paginated<DataPoint>> {
   return apiRequest<DataPoint[]>(`/indicators/${id}/datapoints`, { params })
+}
+
+export type ReviseBaselineInput = Omit<Baseline, 'id' | 'indicatorId' | 'version' | 'previousVersionId'>
+
+/** FR-DC-9: establish/revise a baseline — the prior value is preserved via the audit log, never overwritten silently. */
+export function reviseBaseline(indicatorId: string, input: ReviseBaselineInput): Promise<ApiEnvelope<Indicator>> {
+  return apiRequest<Indicator>(`/indicators/${indicatorId}/baseline`, { method: 'PATCH', body: input })
 }

@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom/vitest'
+import 'fake-indexeddb/auto'
 import { afterAll, afterEach, beforeAll } from 'vitest'
 import { resetDb } from '@/mocks/db'
 import { server } from '@/mocks/server'

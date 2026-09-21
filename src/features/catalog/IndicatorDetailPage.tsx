@@ -9,11 +9,14 @@ import { ResultsChainBreadcrumb } from '@/components/ResultsChainBreadcrumb'
 import { StatusBadge } from '@/components/StatusBadge'
 import { TargetVsActualChart } from '@/components/TargetVsActualChart'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useScopedPermissions } from '@/hooks/useScopedPermissions'
 import { ROLE_LABELS, type RoleId } from '@/types/enums'
 import { formatIndicatorValue } from '@/utils/formatValue'
 import { DataPointHistoryTable } from './components/DataPointHistoryTable'
+import { ReviseBaselineDialog } from './components/ReviseBaselineDialog'
 import {
   useConvergenceGroup,
   useIndicator,
@@ -34,6 +37,7 @@ export function IndicatorDetailPage() {
   const { indicatorId = '' } = useParams()
   const navigate = useNavigate()
 
+  const { hasPermission } = useScopedPermissions()
   const indicatorQuery = useIndicator(indicatorId)
   const dataPointsQuery = useIndicatorDataPoints(indicatorId)
   const indicator = indicatorQuery.data?.data
@@ -82,7 +86,19 @@ export function IndicatorDetailPage() {
           <h1 className="font-heading text-xl font-semibold">{indicator.indicatorText}</h1>
           <p className="text-sm text-muted-foreground">{indicator.resultStatement}</p>
         </div>
-        <StatusBadge status={indicator.status} />
+        <div className="flex items-center gap-2">
+          <StatusBadge status={indicator.status} />
+          {hasPermission('datapoint:enter') && (
+            <>
+              <Button asChild size="sm" variant="outline">
+                <Link to={`/indicators/${indicator.id}/bulk-entry`}>Bulk entry</Link>
+              </Button>
+              <Button asChild size="sm">
+                <Link to={`/indicators/${indicator.id}/data-entry`}>Enter data</Link>
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {domainIndicatorsQuery.data && (
@@ -147,8 +163,9 @@ export function IndicatorDetailPage() {
       </div>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Baseline & targets</CardTitle>
+          <ReviseBaselineDialog indicator={indicator} />
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <DefinitionRow
