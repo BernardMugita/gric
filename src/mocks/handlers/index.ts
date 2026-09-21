@@ -1,5 +1,17 @@
-import type { HttpHandler } from 'msw'
+import { authHandlers } from './auth'
+import { dataPointHandlers } from './datapoints'
+import { importHandlers } from './imports'
+import { indicatorHandlers } from './indicators'
+import { programmeHandlers } from './programmes'
+import { reportHandlers } from './reports'
+import { userHandlers } from './users'
 
-// Resource handlers are added here phase by phase (programmes, indicators,
-// datapoints, imports, reports, auth) so this list mirrors src/api/*.ts 1:1.
-export const handlers: HttpHandler[] = []
+export const handlers = [
+  ...programmeHandlers,
+  ...indicatorHandlers,
+  ...dataPointHandlers,
+  ...importHandlers,
+  ...reportHandlers,
+  ...userHandlers,
+  ...authHandlers,
+]
