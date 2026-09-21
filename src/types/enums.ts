@@ -74,3 +74,15 @@ export const ROLE_IDS = [
   'system_admin',
 ] as const
 export type RoleId = (typeof ROLE_IDS)[number]
+
+export const ROLE_LABELS: Record<RoleId, string> = {
+  programme_officer: 'Programme Officer',
+  policy_partnerships_lead: 'Policy & Partnerships Lead',
+  km_communications_lead: 'Knowledge Management & Communications Lead',
+  mel_systems_lead: 'MEL Systems Lead',
+  gender_focal_point: 'Gender Focal Point',
+  country_coordinator: 'Country Coordinator',
+  mel_lead: 'MEL Lead',
+  gric_africa_leadership: 'GRiC Africa Leadership',
+  system_admin: 'System Admin',
+}

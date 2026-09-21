@@ -6,6 +6,9 @@ import type { IndicatorListParams } from './indicators'
 import type { ListParams } from './types'
 
 export const queryKeys = {
+  countries: {
+    all: ['countries'] as const,
+  },
   programmes: {
     all: ['programmes'] as const,
   },
