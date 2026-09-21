@@ -8,6 +8,7 @@ import {
   Users,
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
+import gricLogo from '@/assets/gric-logo.png'
 import { Badge } from '@/components/ui/badge'
 import { useScopedPermissions } from '@/hooks/useScopedPermissions'
 
@@ -33,8 +34,9 @@ export function Sidebar() {
 
   return (
     <aside className="hidden w-64 shrink-0 border-r bg-sidebar text-sidebar-foreground md:flex md:flex-col">
-      <div className="flex h-14 items-center border-b px-4 font-heading text-sm font-semibold">
-        GRiC MEL System
+      <div className="flex h-14 items-center border-b-2 border-b-[var(--brand-green)] px-4">
+        <img src={gricLogo} alt="GRiC" className="h-6 w-auto" />
+        <span className="ml-2 font-heading text-xs font-semibold text-muted-foreground">MEL System</span>
       </div>
       <nav className="flex-1 space-y-1 p-3">
         {NAV_ITEMS.filter((item) => !item.requiresPermission || hasPermission(item.requiresPermission)).map(
@@ -56,7 +58,7 @@ export function Sidebar() {
             const className = cn(
               'flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm',
               isActive
-                ? 'bg-sidebar-accent font-medium text-sidebar-accent-foreground'
+                ? 'bg-sidebar-primary font-medium text-sidebar-primary-foreground'
                 : 'text-muted-foreground',
               item.path && !isActive && 'hover:bg-sidebar-accent/50',
             )

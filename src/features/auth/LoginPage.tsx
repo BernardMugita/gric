@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
+import gricLogo from '@/assets/gric-logo.png'
 import { ApiRequestError } from '@/api/client'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -68,9 +69,10 @@ export function LoginPage() {
 
   return (
     <div className="flex min-h-svh items-center justify-center bg-background p-6">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md border-t-4 border-t-[var(--brand-green)]">
         <CardHeader>
-          <CardTitle>GRiC MEL System</CardTitle>
+          <img src={gricLogo} alt="GRiC" className="mb-2 h-8 w-auto" />
+          <CardTitle>MEL System</CardTitle>
           <CardDescription>Sign in to continue</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
