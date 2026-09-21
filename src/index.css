@@ -81,6 +81,16 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+
+    /* dataviz — validated default palette (references/palette.md), slot 1 + status */
+    --viz-series-1: #2a78d6;
+    --viz-muted-ink: #898781;
+    --viz-gridline: #e1e0d9;
+    --viz-baseline-axis: #c3c2b7;
+    --viz-status-good: #0ca30c;
+    --viz-status-warning: #fab219;
+    --viz-status-serious: #ec835a;
+    --viz-status-critical: #d03b3b;
 }
 
 .dark {
@@ -115,6 +125,16 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
+
+    /* dataviz — dark-mode steps for the same slots, validated against the dark surface */
+    --viz-series-1: #3987e5;
+    --viz-muted-ink: #898781;
+    --viz-gridline: #2c2c2a;
+    --viz-baseline-axis: #383835;
+    --viz-status-good: #0ca30c;
+    --viz-status-warning: #fab219;
+    --viz-status-serious: #ec835a;
+    --viz-status-critical: #d03b3b;
 }
 
 @layer base {

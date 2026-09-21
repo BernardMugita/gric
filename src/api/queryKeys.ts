@@ -9,6 +9,9 @@ export const queryKeys = {
   countries: {
     all: ['countries'] as const,
   },
+  disaggregationDimensions: {
+    all: ['disaggregation-dimensions'] as const,
+  },
   programmes: {
     all: ['programmes'] as const,
   },

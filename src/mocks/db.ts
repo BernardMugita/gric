@@ -148,6 +148,7 @@ export interface IndicatorFilters {
   sphereOfAccountability?: string
   genderIntegrationLevel?: string
   responsibleRoleId?: string
+  convergenceGroupId?: string
   page?: number
   pageSize?: number
 }
@@ -156,6 +157,8 @@ export function listIndicators(filters: IndicatorFilters) {
   let items = state.indicators
   if (filters.programmeId) items = items.filter((i) => i.programmeId === filters.programmeId)
   if (filters.domainId) items = items.filter((i) => i.domainId === filters.domainId)
+  if (filters.convergenceGroupId)
+    items = items.filter((i) => i.convergenceGroupId === filters.convergenceGroupId)
   if (filters.resultLevel) items = items.filter((i) => i.resultLevel === filters.resultLevel)
   if (filters.status) items = items.filter((i) => i.status === filters.status)
   if (filters.sphereOfAccountability)

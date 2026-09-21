@@ -14,6 +14,7 @@ export interface IndicatorListParams extends ListParams {
   sphereOfAccountability?: string
   genderIntegrationLevel?: string
   responsibleRoleId?: string
+  convergenceGroupId?: string
 }
 
 export function listIndicators(params: IndicatorListParams = {}): Promise<Paginated<Indicator>> {
